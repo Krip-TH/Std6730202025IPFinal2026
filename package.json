@@ -1,0 +1,9 @@
+{
+  "name": "std0202025ipfinal2026",
+  "private": true,
+  "scripts": {
+    "test": "npm --prefix backend test",
+    "backend": "npm --prefix backend start",
+    "frontend": "npm --prefix frontend start"
+  }
+}

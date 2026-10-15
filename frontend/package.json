@@ -1,0 +1,30 @@
+{
+  "name": "kriptop-hr-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "web": "expo start --web",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "check": "tsc --noEmit",
+    "test": "node test/workflow.mjs",
+    "export:web": "expo export --platform web"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "~55.0.0",
+    "expo": "~55.0.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.10",
+    "react-native-web": "^0.21.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "~19.2.0",
+    "esbuild": "^0.28.2",
+    "jsdom": "^30.1.2",
+    "typescript": "~5.9.2"
+  }
+}
