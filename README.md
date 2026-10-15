@@ -85,6 +85,8 @@ Manual acceptance: sign in; add an employee; toggle status; cancel a delete and 
 
 ## Teacher Cloud deployment
 
+The supplied phpMyAdmin export is included at [backend/sql/std6730202025IPFinal2026.sql](backend/sql/std6730202025IPFinal2026.sql). It is a seven-record submission snapshot; adding it to this project does not import or change the live database. The earlier schema proposal is preserved separately in the same folder.
+
 The backend has been deployed and verified at `/app/std6730202025IPFinal2026` on port 3117. The frontend uses that verified Cloud API. Current configuration, backups, test results and the SSH-session lifecycle limitation are documented in [deploy/STATUS.md](deploy/STATUS.md). Earlier planning notes in `deploy/CLOUD.md` are superseded by that deployment record.
 
 The confirmed backend directory is `/app/std6730202025IPFinal2026`. Its original files were backed up before deployment. Cloud `.env` is private and uses the verified internal MySQL endpoint. Only temporary test employees were created/deleted; all six records present before the upgrade and audited ImperialWood files are unchanged. No schema, seed or `IW_` query was executed. The course sandbox requires the authenticated SSH session to stay open; see `deploy/STATUS.md`.

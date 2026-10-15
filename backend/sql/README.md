@@ -5,7 +5,14 @@ The only employee table is **`std6730202025IPFinal2026`** (case-sensitive spelli
 
 **Current verification:** the deployed Cloud backend connected successfully to `127.0.0.1:3306`; the required table structure and five records were confirmed. Real CRUD/analytics tests passed and all original records were preserved. Credentials are configured privately on the Cloud. See `deploy/STATUS.md` at the repository root for current startup and session-lifecycle details. Laptop direct database access and the earlier SSH-forwarding attempt failed; run the backend on the Cloud and connect Expo to Express.
 
-The user has manually created this table in phpMyAdmin. **Do not import or run `std6730202025IPFinal2026.sql` again.** That file is retained only as a historical schema proposal. There is no need to recreate, seed or overwrite existing records.
+The user has manually created this table in phpMyAdmin. **Do not import or run these scripts against the existing Cloud table.** There is no need to recreate, seed or overwrite existing records.
+
+## Included SQL files
+
+- `std6730202025IPFinal2026.sql`: the exact phpMyAdmin export supplied by the user on 15 October 2026, including the table definition, primary key and seven exported employee records. This is a submission snapshot, not a statement of the current live employee count. It contains `CREATE TABLE`, `INSERT` and `ALTER TABLE` statements and was copied without executing it.
+- `KripTop_initial-schema-proposal.sql`: the earlier schema/conditional-seed proposal, preserved separately for reference. It is not the user-supplied export and is not needed for the deployed database.
+
+The supplied export contains no database password. Runtime credentials remain in ignored `.env` files.
 
 The backend defaults to MySQL. It never creates tables or inserts seeds on startup. The original in-memory implementation remains available only through the explicit `EMPLOYEE_STORAGE=memory` setting for isolated tests and the original PDF behavior; database errors never switch the application into memory mode.
 
