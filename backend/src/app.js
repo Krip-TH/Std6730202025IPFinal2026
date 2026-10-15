@@ -1,17 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import { randomUUID as KripTop_randomUUID } from 'node:crypto';
-import { KripTop_clusterSalaries } from './clusters.js';
+import { KripTop_analyzeEmployees } from './clusters.js';
+import { KripTop_createMysqlStore } from './mysql-store.js';
+import { KripTop_validEmployee, KripTop_validationMessage } from './validation.js';
 
-export function KripTop_createApp() {
+export function KripTop_createApp(KripTop_store = KripTop_createMysqlStore()) {
   const KripTop_app = express();
-  let KripTop_employees = [
-    { id: '1', name: 'John Doe', position: 'Software Engineer', status: 'Active', salary: 45000 },
-    { id: '2', name: 'Maya Chen', position: 'HR Manager', status: 'Active', salary: 62000 },
-    { id: '3', name: 'Noah Williams', position: 'Office Assistant', status: 'On Leave', salary: 18000 },
-    { id: '4', name: 'Amara Patel', position: 'Product Director', status: 'Active', salary: 85000 },
-    { id: '5', name: 'Niran Suri', position: 'Junior Designer', status: 'Active', salary: 25000 },
-  ];
   KripTop_app.use(cors());
   KripTop_app.use(express.json({ limit: '16kb' }));
   KripTop_app.post('/api/login', (KripTop_req, KripTop_res) => {
@@ -23,29 +18,33 @@ export function KripTop_createApp() {
     if (KripTop_req.get('Authorization') !== 'Bearer mock-jwt-token') return KripTop_res.status(401).json({ success: false, error: 'Please log in.' });
     KripTop_next();
   });
-  KripTop_app.get('/api/employees/salary-clusters', (KripTop_req, KripTop_res) => {
-    KripTop_res.json({ success: true, clusters: KripTop_clusterSalaries(KripTop_employees.map(KripTop_employee => KripTop_employee.salary)) });
+  KripTop_app.get('/api/employees/salary-clusters', async (KripTop_req, KripTop_res) => {
+    KripTop_res.json({ success: true, ...KripTop_analyzeEmployees(await KripTop_store.KripTop_list()) });
   });
-  KripTop_app.get('/api/employees', (KripTop_req, KripTop_res) => KripTop_res.json(KripTop_employees));
-  KripTop_app.post('/api/employees', (KripTop_req, KripTop_res) => {
+  KripTop_app.get('/api/employees', async (KripTop_req, KripTop_res) => KripTop_res.json(await KripTop_store.KripTop_list()));
+  KripTop_app.post('/api/employees', async (KripTop_req, KripTop_res) => {
     const { name: KripTop_name, position: KripTop_position, salary: KripTop_salary } = KripTop_req.body ?? {};
-    if (typeof KripTop_name !== 'string' || !KripTop_name.trim() || typeof KripTop_position !== 'string' || !KripTop_position.trim() || typeof KripTop_salary !== 'number' || !Number.isFinite(KripTop_salary) || KripTop_salary <= 0 || KripTop_salary > Number.MAX_SAFE_INTEGER) {
-      return KripTop_res.status(400).json({ success: false, error: 'Name and position are required. Salary must be a positive finite number within the safe numeric range.' });
+    if (!KripTop_validEmployee(KripTop_req.body)) {
+      return KripTop_res.status(400).json({ success: false, error: KripTop_validationMessage });
     }
-    const KripTop_employee = { id: KripTop_randomUUID(), name: KripTop_name.trim(), position: KripTop_position.trim(), status: 'Active', salary: KripTop_salary };
-    KripTop_employees.push(KripTop_employee);
-    return KripTop_res.status(201).json(KripTop_employee);
+    const KripTop_employee = { id: KripTop_randomUUID(), name: KripTop_name.trim(), position: KripTop_position.trim(), status: 'Active', salary: Number(KripTop_salary.toFixed(2)) };
+    return KripTop_res.status(201).json(await KripTop_store.KripTop_add(KripTop_employee));
   });
-  KripTop_app.put('/api/employees/:id/status', (KripTop_req, KripTop_res) => {
-    const KripTop_employee = KripTop_employees.find(KripTop_item => KripTop_item.id === KripTop_req.params.id);
+  KripTop_app.put('/api/employees/:id/status', async (KripTop_req, KripTop_res) => {
+    const KripTop_employee = await KripTop_store.KripTop_toggle(KripTop_req.params.id);
     if (!KripTop_employee) return KripTop_res.status(404).json({ success: false, error: 'Employee not found.' });
-    KripTop_employee.status = KripTop_employee.status === 'Active' ? 'On Leave' : 'Active';
     return KripTop_res.json(KripTop_employee);
   });
-  KripTop_app.delete('/api/employees/:id', (KripTop_req, KripTop_res) => {
-    const KripTop_index = KripTop_employees.findIndex(KripTop_item => KripTop_item.id === KripTop_req.params.id);
-    if (KripTop_index === -1) return KripTop_res.status(404).json({ success: false, error: 'Employee not found.' });
-    KripTop_employees.splice(KripTop_index, 1);
+  KripTop_app.put('/api/employees/:id', async (KripTop_req, KripTop_res) => {
+    if (!KripTop_validEmployee(KripTop_req.body)) return KripTop_res.status(400).json({ success: false, error: KripTop_validationMessage });
+    const KripTop_employee = await KripTop_store.KripTop_update(KripTop_req.params.id, {
+      name: KripTop_req.body.name.trim(), position: KripTop_req.body.position.trim(), salary: Number(KripTop_req.body.salary.toFixed(2)),
+    });
+    if (!KripTop_employee) return KripTop_res.status(404).json({ success: false, error: 'Employee not found.' });
+    return KripTop_res.json(KripTop_employee);
+  });
+  KripTop_app.delete('/api/employees/:id', async (KripTop_req, KripTop_res) => {
+    if (!await KripTop_store.KripTop_delete(KripTop_req.params.id)) return KripTop_res.status(404).json({ success: false, error: 'Employee not found.' });
     return KripTop_res.json({ success: true });
   });
   KripTop_app.use((KripTop_req, KripTop_res) => KripTop_res.status(404).json({ success: false, error: 'Route not found.' }));

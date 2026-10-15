@@ -7,6 +7,9 @@ dist/
 web-build/
 coverage/
 .tools/
+.KripTop_runtime/
+.KripTop_backup_*/
+.KripTop_stage_*/
 tmp/
 *.log
 .DS_Store

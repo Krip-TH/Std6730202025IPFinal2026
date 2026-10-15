@@ -1,10 +1,11 @@
 import { test as KripTop_test } from 'node:test';
 import KripTop_assert from 'node:assert/strict';
 import { KripTop_createApp } from '../src/app.js';
+import { KripTop_createMemoryStore } from '../src/memory-store.js';
 import { KripTop_clusterSalaries } from '../src/clusters.js';
 
 KripTop_test('HTTP authentication, validation, CRUD and live analytics', async KripTop_context => {
-  const KripTop_server = KripTop_createApp().listen(0, '127.0.0.1');
+  const KripTop_server = KripTop_createApp(KripTop_createMemoryStore()).listen(0, '127.0.0.1');
   await new Promise(KripTop_resolve => KripTop_server.once('listening', KripTop_resolve));
   KripTop_context.after(() => new Promise(KripTop_resolve => KripTop_server.close(KripTop_resolve)));
   const KripTop_base = `http://127.0.0.1:${KripTop_server.address().port}`;
@@ -20,7 +21,7 @@ KripTop_test('HTTP authentication, validation, CRUD and live analytics', async K
   KripTop_assert.equal((await KripTop_call('/api/login', 'POST', {}, false)).status, 401);
   const KripTop_initial = (await KripTop_call('/api/employees')).data;
   KripTop_assert.ok(KripTop_initial.length >= 5);
-  for (const KripTop_body of [{}, { name: ' ', position: 'Dev', salary: 10 }, { name: 'A', position: '', salary: 10 }, ...['', '45000', null, true, {}, [], 0, -1, 1e100].map(KripTop_salary => ({ name: 'A', position: 'Dev', salary: KripTop_salary }))]) {
+  for (const KripTop_body of [{}, { name: ' ', position: 'Dev', salary: 10 }, { name: 'A', position: '', salary: 10 }, { name: 'A'.repeat(101), position: 'Dev', salary: 10 }, { name: 'A', position: 'B'.repeat(101), salary: 10 }, ...['', '45000', null, true, {}, [], 0, -1, 1e100, 10000000000, 0.001, 1.001, 1e-300].map(KripTop_salary => ({ name: 'A', position: 'Dev', salary: KripTop_salary }))]) {
     KripTop_assert.equal((await KripTop_call('/api/employees', 'POST', KripTop_body)).status, 400, JSON.stringify(KripTop_body));
   }
   const KripTop_malformed = await fetch(`${KripTop_base}/api/employees`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer mock-jwt-token' }, body: '{"salary":NaN}' });

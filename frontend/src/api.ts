@@ -1,8 +1,9 @@
-import { Platform } from 'react-native';
-
-export const KripTop_API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL || (Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000')).replace(/\/$/, '');
+// Verified Express endpoint, distinct from the Cloud MySQL service.
+export const KripTop_API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL || 'http://119.59.102.161:3117').replace(/\/$/, '');
 export type KripTop_Employee = { id: string; name: string; position: string; status: 'Active' | 'On Leave'; salary: number };
 export type KripTop_Cluster = { group: string; centroid: number; count: number };
+export type KripTop_Assignment = { id: string; group: string; salary: number };
+export type KripTop_Analysis = { success: boolean; clusters: KripTop_Cluster[]; assignments: KripTop_Assignment[]; employees: KripTop_Employee[]; generatedAt: string };
 
 export async function KripTop_request<T>(KripTop_path: string, KripTop_token: string | null, KripTop_options: RequestInit = {}): Promise<T> {
   const KripTop_controller = new AbortController();
@@ -18,7 +19,7 @@ export async function KripTop_request<T>(KripTop_path: string, KripTop_token: st
     return KripTop_data as T;
   } catch (KripTop_error) {
     if (KripTop_error instanceof Error && (KripTop_error.name === 'AbortError' || KripTop_error.message.includes('fetch') || KripTop_error.message.includes('Network'))) {
-      throw new Error(`Cannot reach API at ${KripTop_API_BASE_URL}. Check the server, LAN IP and Wi-Fi connection.`);
+      throw new Error(`Cannot reach API at ${KripTop_API_BASE_URL}. Check the API URL, server and network connection.`);
     }
     throw KripTop_error;
   } finally { clearTimeout(KripTop_timeout); }
