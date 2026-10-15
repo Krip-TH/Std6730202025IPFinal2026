@@ -93,15 +93,12 @@ For a database-free local demo only, explicitly set `$env:EMPLOYEE_STORAGE='memo
 
 ## GitHub submission
 
-Create a **public** repository named **Std0202025IPFinal2026**, then from this folder:
+Public repository: **[Krip-TH/Std0202025IPFinal2026](https://github.com/Krip-TH/Std0202025IPFinal2026)**. The existing project is published on `main`, and local `origin` points to this repository. For subsequent updates from this folder:
 
 ```powershell
-git init
 git add .
-git commit -m "Build HR manager and salary analytics exam project"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/Std0202025IPFinal2026.git
-git push -u origin main
+git commit -m "Describe your changes"
+git push origin main
 ```
 
 Authenticate with your own account when requested. If an origin or remote repository already exists, inspect it before adding or pushing. Never force-push. `.gitignore` excludes dependencies, local environment files and temporary tooling. Keep lockfiles in the submission. Submit the public repository URL to LMS yourself.

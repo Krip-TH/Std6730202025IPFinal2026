@@ -51,4 +51,4 @@ This real-browser check supersedes the earlier unavailable-browser limitation be
 - jsdom checks interactions, not rendered pixels. The real browser now covers Web appearance and responsive navigation. Physical Expo Go behavior and native CSV sharing still need a device check. jsdom's missing ResizeObserver warning is expected.
 - Keep the authenticated SSH window open. The course sandbox previously stopped session-owned backend processes on logout; teacher-managed hosting is required for persistence after logout.
 - The frontend dependency audit reported 32 upstream advisories. Supported Expo package versions were retained; no incompatible forced upgrade was applied.
-- No GitHub push or LMS submission was performed. Credentials remain in private ignored environment files.
+- The project was published to the Public repository [Krip-TH/Std0202025IPFinal2026](https://github.com/Krip-TH/Std0202025IPFinal2026) on 15 October 2026. Publishable files and existing Git history were scanned for configured secret values before pushing. Credentials remain in private ignored environment files. No LMS submission was performed.
